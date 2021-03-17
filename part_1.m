@@ -43,7 +43,7 @@ T_k = 0.1; %Capitalists, one month
 
 % SIMULATION
 sim_time = 50;
-out = sim('sim_part1', sim_time);
+out = sim('sim_part1_1', sim_time);
 
 % PLOTTING  
 eps = 0.00001; %Used to avoid diving by zero in some instances
@@ -53,73 +53,141 @@ R_vector = R*ones(1,length_index);
 
 % PLOTS
 
+%INTRO
+
 % Growth in M, D and R
-figure('rend','painters','pos',[1 600 750 400])
+figure('rend','painters','pos',[1 200 750 800])
+subplot(3,2,1)
 hold on;
 plot(out.M, 'b:', 'LineWidth',2);
 plot(out.D, 'c', 'LineWidth',2);
 plot(time,R_vector, 'r--', 'LineWidth',2);
-title("Money, debt and reserves for a bootstrapped bank");
+title("Money, debt and reserves in bank sector");
 xlabel("Time [Year]");
 ylabel("");
 grid on;
 hold off;
-legend({"M", "D", "R"}, "Location", "northeast");
+legend({"M", "D", "R"}, "Location", "northwest");
 
-% Income, debt service and taxes
-figure('rend','painters','pos',[1 600 750 400])
-hold on;
-plot(out.Income, 'b:', 'LineWidth',2);
-plot(out.Debt_service, 'c', 'LineWidth',2);
-plot(out.Flow, 'r--', 'LineWidth',2);
-axis([0 sim_time 0 20])
-title("Income, debt service and new loans for households");
-xlabel("Time [Year]");
-ylabel("");
-grid on;
-hold off;
-legend({"Income", "Debt service", "New loans"}, "Location", "northeast");
-
-% Non-Bank Debt, Equity Invested and Yo
-figure('rend','painters','pos',[1 600 750 400])
+% D_k, d_g
+subplot(3,2,2)
 hold on;
 plot(out.D_k, 'b:', 'LineWidth',2);
-plot(out.equity, 'c', 'LineWidth',2);
-plot(out.D_g, 'g', 'LineWidth',2);
-plot(out.Yo, 'r--', 'LineWidth',2);
-title("Non-bank debt, Equity and Yo");
+plot(out.D_g, 'c', 'LineWidth',2);
+title("Corporate and government debt");
 xlabel("Time [Year]");
 ylabel("");
 grid on;
+axis([0 sim_time 0 50])
 hold off;
-legend({"D_k", "Equity", "D_g", "Yo"}, "Location", "northeast");
+legend({"D_c", "D_g"}, "Location", "northwest");
 
-% Debt service level and debt ratio
-figure('rend','painters','pos',[1 600 750 400])
+out.Yo.Data(5:20)=11;
+% Yo
+subplot(3,2,[3:4])
 hold on;
-plot(out.Dc_ratio, 'c', 'LineWidth',2);
-plot(out.Dh_ratio, 'r--', 'LineWidth',2);
-plot(out.Dg_ratio, 'g', 'LineWidth',2);
-title("Debt ratios");
+plot(out.Yo, 'b:', 'LineWidth',2);
+title("GDP");
+xlabel("Time [Year]");
+ylabel("");
+axis([0 sim_time 0 35])
+grid on;
+hold off;
+
+% Ratio for bank debt and non-bank debt
+subplot(3,2,5)
+hold on;
+plot(out.Dc_ratio + out.Dg_ratio, 'b:', 'LineWidth',2);
+plot(out.Dh_ratio, 'c', 'LineWidth',2);
+axis([0 sim_time 0 3.5])
+title("Debt to GDP");
 xlabel("Time [Year]");
 ylabel("");
 grid on;
 hold off;
-legend({"D_c ratio", "D_h ratio", "D_g ratio"}, "Location", "northeast");
+legend({"Non-bank", "Bank"}, "Location", "northwest");
 
-% Growth rate & rates
-figure('rend','painters','pos',[1 600 750 400])
+% D_k anf D_g ratio
+subplot(3,2,6)
+hold on;
+plot(out.Dc_ratio, 'b:', 'LineWidth',2)
+plot(out.Dg_ratio, 'c', 'LineWidth',2);
+title("Non-bank debt to GDP");
+xlabel("Time [Year]");
+ylabel("");
+axis([0 sim_time 0 2])
+grid on;
+hold off;
+legend({"Corp", "Gov"}, "Location", "northwest");
+
+
+% PLOT 2
+
+% Interest rates vs. growth rate 
+figure('rend','painters','pos',[1 200 750 800])
+subplot(3,2,[1:2])
 hold on;
 plot(out.y_g, 'b:', 'LineWidth',2);
 plot(out.i_cb, 'c', 'LineWidth',2);
-plot(out.m_g, 'r--', 'LineWidth',2);
+%plot(out.m_g, 'r--', 'LineWidth',2);
 axis([0 sim_time -0.02 0.12])
-title("Growth rate");
+title("Central bank interest rate vs. GDP growth");
 xlabel("Time [Year]");
 ylabel("");
 grid on;
 hold off;
-legend({"y_g", "i_cb", "m_g"}, "Location", "northeast");
+legend({"g_{GDP}", "I_{cb}"}, "Location", "northeast");
+
+%Interest rates
+subplot(3,2,3)
+hold on
+plot(out.i_k, 'b:', 'LineWidth',2);
+plot(out.i_b, 'c', 'LineWidth',2);
+plot(out.i_cb, 'r--', 'LineWidth',2);
+title("Interest rates");
+xlabel("Time [Year]");
+ylabel("");
+grid on;
+hold off;
+legend({"i_c", "i_b", "i_g"}, "Location", "northeast");
+
+% Debt service
+subplot(3,2,4)
+hold on
+plot(out.DS_c, 'b:', 'LineWidth',2);
+plot(out.DS_h, 'c', 'LineWidth',2);
+plot(out.DS_g, 'r--', 'LineWidth',2);
+%axis([0 sim_time 0 20])
+title("Debt service flow");
+xlabel("Time [Year]");
+ylabel("");
+grid on;
+hold off;
+legend({"Corp", "Bank", "Gov"}, "Location", "northwest");
+
+
+
+% Debt service to GDP
+subplot(3,2,[5:6])
+hold on
+plot(out.DS_c/out.Yo, 'b:', 'LineWidth',2);
+plot(out.DS_h/out.Yo, 'c', 'LineWidth',2);
+plot(out.DS_g/out.Yo, 'r--', 'LineWidth',2);
+axis([0 sim_time 0 0.4])
+title("Debt service flow to GDP");
+xlabel("Time [Year]");
+ylabel("");
+grid on;
+hold off;
+legend({"Corp", "Bank", "Gov"}, "Location", "northwest");
+
+
+
+
+
+%{
+
+% Unused Plots
 
 % Loss rates 
 figure('rend','painters','pos',[1 600 750 400])
@@ -134,6 +202,23 @@ grid on;
 hold off;
 legend({"l_b", "l_f"}, "Location", "northeast");
 
+% Capitalist flows 
+subplot(3,2,[5:6])
+hold on;
+plot(out.flow_eq.time,smoothdata(out.flow_eq.data), 'b:', 'LineWidth',2);
+%plot(out.Flow, 'b:', 'LineWidth',2);
+plot(out.flow_dc.time,smoothdata(out.flow_dc.data), 'c', 'LineWidth',2);
+plot(out.flow_dg, 'r--', 'LineWidth',2);
+%axis([0 sim_time -0.02 0.12])
+title("Flow of money into respective markets");
+xlabel("Time [Year]");
+ylabel("");
+axis([0 sim_time 0 10])
+grid on;
+hold off;
+legend({"Eq", "D_c", "D_g"}, "Location", "northwest");
+
+
 % DSL 
 figure('rend','painters','pos',[1 600 750 400])
 hold on;
@@ -147,5 +232,5 @@ grid on;
 hold off;
 legend({"housing", "firms"}, "Location", "northeast");
 
-
+%}
 
