@@ -43,8 +43,9 @@ T_h = 0.1; %Households, one month
 T_k = 0.1; %Capitalists, one month
 
 % SIMULATION
-sim_time = 55;
-out = sim('sim_part1_1', sim_time);
+sim_time = 90;
+start_year = 0;
+out = sim('sim_part2', sim_time);
 
 % PLOTTING  
 eps = 0.00001; %Used to avoid diving by zero in some instances
@@ -62,12 +63,12 @@ subplot(3,2,1)
 hold on;
 plot(out.M, 'b:', 'LineWidth',2);
 plot(out.D, 'c', 'LineWidth',2);
-plot(time,R_vector, 'r--', 'LineWidth',2);
+plot(1+out.MMT_debt, 'r--', 'LineWidth',2);
 title("Money, debt and reserves in bank sector");
 xlabel("Time [Year]");
 ylabel("");
 grid on;
-axis([0 sim_time 0 60])
+axis([start_year sim_time 0 300])
 hold off;
 legend({"M", "D", "R"}, "Location", "northwest");
 
@@ -75,12 +76,12 @@ legend({"M", "D", "R"}, "Location", "northwest");
 subplot(3,2,2)
 hold on;
 plot(out.D_k, 'b:', 'LineWidth',2);
-plot(out.D_g, 'c', 'LineWidth',2);
+plot(out.D_g+out.MMT_debt, 'c', 'LineWidth',2);
 title("Corporate and government debt");
 xlabel("Time [Year]");
 ylabel("");
 grid on;
-axis([0 sim_time 0 55])
+axis([start_year sim_time 0 300])
 hold off;
 legend({"D_c", "D_g"}, "Location", "northwest");
 
@@ -92,7 +93,7 @@ plot(out.Yo, 'b:', 'LineWidth',2);
 title("GDP");
 xlabel("Time [Year]");
 ylabel("");
-axis([0 sim_time 0 35])
+axis([start_year sim_time 0 250])
 grid on;
 hold off;
 
@@ -101,7 +102,7 @@ subplot(3,2,5)
 hold on;
 plot(out.Dc_ratio + out.Dg_ratio, 'b:', 'LineWidth',2);
 plot(out.Dh_ratio, 'c', 'LineWidth',2);
-axis([0 sim_time 0 3.5])
+axis([start_year sim_time 0 3.5])
 title("Debt to GDP");
 xlabel("Time [Year]");
 ylabel("");
@@ -117,7 +118,7 @@ plot(out.Dg_ratio, 'c', 'LineWidth',2);
 title("Non-bank debt to GDP");
 xlabel("Time [Year]");
 ylabel("");
-axis([0 sim_time 0 2])
+axis([start_year sim_time 0 2])
 grid on;
 hold off;
 legend({"Corp", "Gov"}, "Location", "northwest");
@@ -132,7 +133,7 @@ hold on;
 plot(out.y_g, 'b:', 'LineWidth',2);
 plot(out.i_cb, 'c', 'LineWidth',2);
 %plot(out.m_g, 'r--', 'LineWidth',2);
-axis([0 sim_time -0.02 0.12])
+axis([start_year sim_time -0.02 0.12])
 title("Central bank interest rate vs. GDP growth");
 xlabel("Time [Year]");
 ylabel("");
@@ -150,7 +151,7 @@ title("Interest rates");
 xlabel("Time [Year]");
 ylabel("");
 grid on;
-axis([0 sim_time 0 0.15])
+axis([start_year sim_time 0 0.2])
 hold off;
 legend({"i_c", "i_b", "i_g"}, "Location", "northeast");
 
@@ -165,7 +166,7 @@ title("Debt service flow");
 xlabel("Time [Year]");
 ylabel("");
 grid on;
-axis([0 sim_time 0 8])
+axis([start_year sim_time 0 60])
 hold off;
 legend({"Corp", "Bank", "Gov"}, "Location", "northwest");
 
@@ -177,14 +178,13 @@ hold on
 plot(out.DS_c/out.Yo, 'b:', 'LineWidth',2);
 plot(out.DS_h/out.Yo, 'c', 'LineWidth',2);
 plot(out.DS_g/out.Yo, 'r--', 'LineWidth',2);
-axis([0 sim_time 0 0.4])
+axis([start_year sim_time 0 0.4])
 title("Debt service flow to GDP");
 xlabel("Time [Year]");
 ylabel("");
 grid on;
 hold off;
 legend({"Corp", "Bank", "Gov"}, "Location", "northwest");
-
 
 
 
